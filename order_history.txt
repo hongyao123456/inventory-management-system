@@ -1,0 +1,3 @@
+Ordered: Apple, Quantity: 10, Total Price: $50
+Username: hong, Ordered: Apple, Quantity: 30, Total Price: $150
+Username: hong, Ordered: Apple, Quantity: 3, Total Price: $15

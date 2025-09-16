@@ -1,0 +1,198 @@
+#ifndef ORDER_H
+#define ORDER_H
+
+#include "stock.h"
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include "sqlite3.h"
+
+using namespace std;
+
+class OrderManager {
+public:
+    void logOrderToFile(const string& username, const string& itemName, int quantity, double totalPrice);
+    void placeOrder(const string& itemName, int quantity, double pricePerUnit, const string& username);
+    void createPaymentTable(sqlite3* db);
+    void insertPaymentDetails(int paymentMethod, const string& cardNumber);
+    void viewOrderHistory(const string& username);
+    void viewAllOrderHistories();
+    void logSystemAction(const string& action);
+};
+
+struct Order {
+    string username;  // 用户名，记录是谁下的订单
+    string itemName;
+    int quantity;
+    double totalPrice;
+};
+
+// Function to log an order to a file (for now, just text)
+void OrderManager::logOrderToFile(const string& username, const string& itemName, int quantity, double totalPrice) {
+    ofstream orderFile("order_history.txt", ios::app);
+    if (orderFile.is_open()) {
+        orderFile << "Username: " << username << ", Ordered: " << itemName
+                  << ", Quantity: " << quantity << ", Total Price: $" << totalPrice << endl;
+    } else {
+        cout << "Unable to open order history file for logging." << endl;
+    }
+    orderFile.close();
+}
+
+// Function to place an order
+void OrderManager::placeOrder(const string& itemName, int quantity, double pricePerUnit, const string& username) {
+    // Calculate the total price
+    double totalPrice = quantity * pricePerUnit;
+
+    // Display order details
+    cout << "Order Details:\n";
+    cout << "Item: " << itemName << "\n";
+    cout << "Quantity: " << quantity << "\n";
+    cout << "Price per unit: " << pricePerUnit << "\n";
+    cout << "Total Price: " << totalPrice << "\n";
+
+    // Order confirmation
+    char confirmation;
+    cout << "Confirm order? (Y/N): ";
+    cin >> confirmation;
+    if (confirmation == 'Y' || confirmation == 'y') {
+        cout << "Enter the payment method\n";
+        cout << "1. Debit card\n";
+        cout << "2. Credit card\n";
+        cout << "3. Exit\n";
+        
+        int select;
+        cin >> select;
+
+        string cardNumber;
+        switch (select) {
+            case 1:
+                cout << "Enter the debit card number: ";
+                cin >> cardNumber;
+                cout << "Processing Debit card payment...\n";
+                break;
+            case 2:
+                cout << "Enter the credit card number: ";
+                cin >> cardNumber;
+                cout << "Processing Credit card payment...\n";
+                break;
+            default:
+                cout << "Invalid payment option selected.\n";
+                return;
+        }
+
+        // Insert payment details into the database
+        if (!cardNumber.empty()) {
+            insertPaymentDetails(select, cardNumber);
+        }
+
+        // Log order to file
+        logOrderToFile(username, itemName, quantity, totalPrice);
+        cout << "Order placed successfully.\n";
+    } else {
+        cout << "Order cancelled.\n";
+    }
+}
+
+// Function to create the payment table
+void OrderManager::createPaymentTable(sqlite3* db) {
+    const char* createTableSQL = 
+        "CREATE TABLE IF NOT EXISTS payment ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "payment_method INTEGER NOT NULL, "
+        "card_number TEXT NOT NULL);";
+
+    char* errorMessage = nullptr;
+    int rc = sqlite3_exec(db, createTableSQL, nullptr, nullptr, &errorMessage);
+    if (rc != SQLITE_OK) {
+        cerr << "SQL error: " << errorMessage << endl;
+        sqlite3_free(errorMessage);
+    } else {
+        cout << "Payment table created successfully or already exists.\n";
+    }
+}
+
+// Function to insert payment details into the database
+void OrderManager::insertPaymentDetails(int paymentMethod, const string& cardNumber) {
+    sqlite3* db;
+    int rc = sqlite3_open("stock.db", &db);  // Open the database
+    if (rc) {
+        cerr << "Can't open database: " << sqlite3_errmsg(db) << endl;
+        return;
+    }
+
+    // Prepare the SQL statement to insert payment details
+    string insertSQL = "INSERT INTO payment (payment_method, card_number) VALUES (?, ?)";
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, insertSQL.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << endl;
+        sqlite3_close(db);
+        return;
+    }
+
+    // Bind the payment method and card number to the prepared statement
+    sqlite3_bind_int(stmt, 1, paymentMethod);  // 1: payment_method
+    sqlite3_bind_text(stmt, 2, cardNumber.c_str(), -1, SQLITE_STATIC);  // 2: card_number
+
+    // Execute the statement
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        cerr << "Execution failed: " << sqlite3_errmsg(db) << endl;
+    } else {
+        cout << "Payment details inserted successfully.\n";
+    }
+
+    // Clean up
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+}
+
+// Function to view order history for a specific user
+void OrderManager::viewOrderHistory(const string& username) {
+    ifstream orderFile("order_history.txt");
+    if (!orderFile) {
+        cout << "Unable to open order history file." << endl;
+        return;
+    }
+
+    string line;
+    while (getline(orderFile, line)) {
+        if (line.find("Username: " + username) != string::npos) {
+            cout << line << endl;
+        }
+    }
+    orderFile.close();
+}
+
+// Function to view all order histories
+void OrderManager::viewAllOrderHistories() {
+    ifstream orderFile("order_history.txt");
+    if (!orderFile) {
+        cout << "Unable to open order history file." << endl;
+        return;
+    }
+
+    string line;
+    while (getline(orderFile, line)) {
+        cout << line << endl;
+    }
+    orderFile.close();
+}
+
+// Function to log system actions like adding orders, payments, etc.
+void OrderManager::logSystemAction(const string& action) {
+    ofstream logFile("system.log", ios::app);
+    if (logFile.is_open()) {
+        auto now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        logFile << ctime(&now) << ": " << action << endl;
+    } else {
+        cout << "Unable to open system log file." << endl;
+    }
+    logFile.close();
+}
+
+#endif
