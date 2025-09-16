@@ -33,7 +33,7 @@ A comprehensive C++ console-based inventory management system that handles stock
 
 ## Project Structure
 
-`
+\\\
 system3.0/
  header/                 # Header files
     order.h            # Order management declarations
@@ -51,7 +51,7 @@ system3.0/
  system.log            # System activity logs
  c.txt                 # Extended order management with database features
  README.md             # This file
-`
+\\\
 
 ## Technical Details
 
@@ -64,33 +64,33 @@ system3.0/
 ### Data Models
 
 #### StockItem Structure
-`cpp
+\\\cpp
 struct StockItem {
     std::string name;    // Item name
     int quantity;        // Available quantity
 };
-`
+\\\
 
 #### Order Structure
-`cpp
+\\\cpp
 struct Order {
     string username;     // Customer username
     string itemName;     // Ordered item
     int quantity;        // Order quantity
     double totalPrice;   // Total order value
 };
-`
+\\\
 
 ### Database Schema
 The system includes SQLite database support for payment processing:
 
-`sql
+\\\sql
 CREATE TABLE payment (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     payment_method INTEGER NOT NULL,
     card_number TEXT NOT NULL
 );
-`
+\\\
 
 ## Getting Started
 
@@ -100,16 +100,16 @@ CREATE TABLE payment (
 - Windows/Linux/macOS operating system
 
 ### Compilation
-`ash
+\\\ash
 # Compile the project
 g++ -std=c++11 -o home src/*.cpp -lsqlite3
 
 # Or use the provided executable
 ./home.exe
-`
+\\\
 
 ### Running the Application
-1. Execute the compiled binary: ./home.exe
+1. Execute the compiled binary: \./home.exe\
 2. Choose from the main menu:
    - **Administrator Login**: Access admin features
    - **User Login**: Access user features
