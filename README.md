@@ -2,7 +2,7 @@
 
 A comprehensive C++ console-based inventory management system that handles stock management, user accounts, and order processing with both file-based and database storage capabilities.
 
-##  Features
+## Features
 
 ### User Management
 - **User Registration**: Create new user accounts with username and password
@@ -10,7 +10,7 @@ A comprehensive C++ console-based inventory management system that handles stock
 - **User Dashboard**: View stock, place orders, and track order history
 
 ### Admin Management
-- **Admin Authentication**: Secure admin login (username: dmin, password: dmin123)
+- **Admin Authentication**: Secure admin login (username: admin, password: admin123)
 - **Stock Management**: Add, update, delete, and view inventory items
 - **System Monitoring**: View system logs and all order histories
 - **Order Oversight**: Monitor all user orders and transactions
@@ -31,7 +31,7 @@ A comprehensive C++ console-based inventory management system that handles stock
 - **Database Integration**: SQLite database for payment processing
 - **Logging System**: Comprehensive system activity logging
 
-##  Project Structure
+## Project Structure
 
 `
 system3.0/
@@ -53,7 +53,7 @@ system3.0/
  README.md             # This file
 `
 
-##  Technical Details
+## Technical Details
 
 ### Dependencies
 - **C++ Standard Library**: Uses STL containers and algorithms
@@ -92,7 +92,7 @@ CREATE TABLE payment (
 );
 `
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 - C++ compiler (GCC, Clang, or MSVC)
@@ -116,7 +116,7 @@ g++ -std=c++11 -o home src/*.cpp -lsqlite3
    - **Create Account**: Register new user
    - **Exit**: Close application
 
-##  Usage Guide
+## Usage Guide
 
 ### For Users
 1. **Create Account**: Register with username and password
@@ -131,7 +131,7 @@ g++ -std=c++11 -o home src/*.cpp -lsqlite3
 3. **Monitor System**: View system logs and all orders
 4. **Track Activity**: Monitor user actions and system events
 
-##  Configuration
+## Configuration
 
 ### Default Stock Items
 The system comes pre-loaded with sample inventory:
@@ -144,11 +144,11 @@ The system comes pre-loaded with sample inventory:
 - Total price calculated as: quantity  price_per_unit
 
 ### Security
-- Admin credentials: dmin / dmin123
+- Admin credentials: admin / admin123
 - User accounts stored in memory (not persistent)
 - Maximum 2 login attempts before lockout
 
-##  Data Storage
+## Data Storage
 
 ### File-based Storage
 - **order_history.txt**: All order records with timestamps
@@ -158,7 +158,7 @@ The system comes pre-loaded with sample inventory:
 - **stock.db**: SQLite database for payment processing
 - Payment methods: 1 (Debit), 2 (Credit)
 
-##  System Features
+## System Features
 
 ### Logging
 - Comprehensive activity logging with timestamps
@@ -178,7 +178,7 @@ The system comes pre-loaded with sample inventory:
 - Progress indicators for order processing
 - Detailed error messages
 
-##  Future Enhancements
+## Future Enhancements
 
 The project includes extended functionality in c.txt with:
 - Enhanced payment processing
@@ -186,11 +186,11 @@ The project includes extended functionality in c.txt with:
 - Advanced order management features
 - Payment method tracking
 
-##  License
+## License
 
 This project is part of a learning exercise and is available for educational purposes.
 
-##  Contributing
+## Contributing
 
 This appears to be a student project. For educational use and learning purposes.
 
